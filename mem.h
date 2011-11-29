@@ -1,48 +1,49 @@
 #include <iostream>
 using namespace std;
-class Memory
+
+class Process
 {
 private:
-	char memName;
-	int numCells;
+	char procName;
+	int cellRequired;
 
 public:
-	Memory();
-	Memory(char mem, int cell);
-	char getMemName();
-	int getNumCells();
+	Process();
+	Process(char proc, int cell);
+	char getProcName();
+	int getCellRequired();
 	void setMemName(char name);
-	void setNumCells(int cell);
+	void setCellRequired(int cell);
 };
 
-Memory::Memory()
+Process::Process()
 {
-	memName = ' ';
-	numCells = 0;
+	procName = ' ';
+	cellRequired = 0;
 }
 
-Memory::Memory(char mem, int cell)
+Process::Process(char proc, int cell)
 {
-	memName = mem;
-	numCells = cell;
+	procName = proc;
+	cellRequired = cell;
 }
 
-char Memory::getMemName()
+char Process::getProcName()
 {
-	return memName;
+	return procName;
 }
 
-int Memory::getNumCells()
+int Process::getCellRequired()
 {
-	return numCells;
+	return cellRequired;
 }
 
-void Memory::setMemName(char name)
+void Process::setMemName(char name)
 {
-	memName = name;
+	procName = name;
 }
 
-void Memory::setNumCells(int cell)
+void Process::setCellRequired(int cell)
 {
-	numCells = cell;
+	cellRequired = cell;
 }
