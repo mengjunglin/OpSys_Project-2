@@ -8,11 +8,14 @@
 #include "mem.h"
 using namespace std;
 
+void printMem();
+
+char mainMem[2400]; //1-dimentional character array, main memory
+Process processes[20];	//create an array of Process
+
 int main()
 {
 	int amount, used = 0, i, j;
-	char mainMem[2400]; //1-dimentional character array, main memory
-	Process processes[20];	//create an array of Process
 
 	for (i = 0; i < 2400; i++)
 	{
@@ -25,7 +28,7 @@ int main()
 	for (i = 0; i < 20; i++)
 	{
 		amount = rand() % 90 + 10; //random amount between 10-100
-		Process p(i+65, amount);
+		Process p(i+65, amount); //65 is the ASCII for 'A'
 		processes[i] = p;
 	}
 
@@ -42,10 +45,15 @@ int main()
 		used += processes[i].getCellRequired();
 	}
 
-	//print all 2400 cells
-	for (i = 0; i < 2400; i++)
-		cout << mainMem[i];
+	//print out main memory
+	printMem();
 
 	system("pause");
 	return 0;
+}
+
+void printMem()
+{
+	for (int i = 0; i < 2400; i++)
+		cout << mainMem[i];
 }
