@@ -4,36 +4,48 @@
 // Finalize Date: 12/09/2011
 
 #include <iostream>
+#include <string.h>
 #include <time.h>
 #include "mem.h"
 using namespace std;
 
-void printMem();
+#define ros 80
+
+Process* create(int size); //function to create an array of processes
+
+void firstFit(Process* p, int ptprob, int npprob);	//First Fit Algorithm
+void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
+void nextFit(Process* p, int ptprob, int npprob);	//Next Fit Algorithm
+void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
+
+void printMem(); //function to print main memory
 
 char mainMem[2400]; //1-dimentional character array, main memory
-Process processes[20];	//create an array of Process
 
-int main()
+int main(int argc, char * argv[])
 {
-	int amount, used = 0, i, j;
+	int used = ros, ptp, npp, i, j;
 
+	if (argc != 4)
+	{
+		cout << "USAGE: memsim { first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
+		system("pause");
+		return 0;
+	}
+
+	//initialize main memory
 	for (i = 0; i < 2400; i++)
 	{
-		mainMem[i] = '.';
+		if (i < ros)
+			mainMem[i] = '#';
+		else
+			mainMem[i] = '.';
 	}
 
 	srand(time(NULL)); //set seed to get random numbers
 
-	//20 random amount of memory cells
-	for (i = 0; i < 20; i++)
-	{
-		amount = rand() % 90 + 10; //random amount between 10-100
-		Process p(i+65, amount); //65 is the ASCII for 'A'
-		processes[i] = p;
-	}
-
-	/*for (i = 0; i < 20; i++)
-		cout << processes[i].getProcName() << " " << processes[i].getCellRequired() << endl;*/
+	Process* processes;	//create an array of Process
+	processes = create(20); //20 random amount of memory cells
 
 	//assign into main memory
 	for (i = 0; i < 20; i++)
@@ -45,11 +57,74 @@ int main()
 		used += processes[i].getCellRequired();
 	}
 
+	ptp = (int)argv[2]; //process-termination-probability = argv[2]
+	npp = (int)argv[3]; //new-process-probability = argv[3]
+
+	if (strcmp(argv[1],"first") == 0)
+	{
+		//running first fit algo
+		firstFit(processes, ptp, npp);
+	}
+	else if (strcmp(argv[1],"best") == 0)
+	{
+		//running best fit algo
+		bestFit(processes, ptp, npp);
+	}
+	else if (strcmp(argv[1],"next") == 0)
+	{
+		//running next fit algo
+		nextFit(processes, ptp, npp);
+	}
+	else if (strcmp(argv[1],"worst") == 0)
+	{
+		//running worst fit algo
+		worstFit(processes, ptp, npp);
+	}
+	else
+	{
+		cout << "Can not identify the algorithm." << endl;
+		cout << "USAGE: memsim { first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
+
+		system("pause");
+		return 0;
+	}
+
 	//print out main memory
 	printMem();
 
 	system("pause");
 	return 0;
+}
+
+Process* create(int size)
+{
+	Process* arr = new Process[size];
+
+	srand(time(NULL));
+
+	for (int i = 0; i < size; i++)
+	{
+		int amount = rand() % 90 + 10;
+		Process p(i+65, amount);
+		arr[i] = p;
+	}
+	return arr;
+}
+
+void firstFit(Process* p, int ptprob, int npprob)
+{
+}
+
+void bestFit(Process* p, int ptprob, int npprob)
+{
+}
+
+void nextFit(Process* p, int ptprob, int npprob)
+{
+}
+
+void worstFit(Process* p, int ptprob, int npprob)
+{
 }
 
 void printMem()
