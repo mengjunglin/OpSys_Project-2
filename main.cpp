@@ -11,7 +11,7 @@ using namespace std;
 
 #define ros 80
 
-Process* create(int size); //function to create an array of processes
+Process* create(int size, int tp); //function to create an array of processes
 
 void firstFit(Process* p, int ptprob, int npprob);	//First Fit Algorithm
 void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
@@ -33,6 +33,9 @@ int main(int argc, char * argv[])
 		return 0;
 	}
 
+	ptp = (int)argv[2]; //process-termination-probability = argv[2]
+	npp = (int)argv[3]; //new-process-probability = argv[3]
+
 	//initialize main memory
 	for (i = 0; i < 2400; i++)
 	{
@@ -45,7 +48,7 @@ int main(int argc, char * argv[])
 	srand(time(NULL)); //set seed to get random numbers
 
 	Process* processes;	//create an array of Process
-	processes = create(20); //20 random amount of memory cells
+	//processes = create(20, ptp); //20 random amount of memory cells
 
 	//assign into main memory
 	for (i = 0; i < 20; i++)
@@ -56,9 +59,6 @@ int main(int argc, char * argv[])
 		}
 		used += processes[i].getCellRequired();
 	}
-
-	ptp = (int)argv[2]; //process-termination-probability = argv[2]
-	npp = (int)argv[3]; //new-process-probability = argv[3]
 
 	if (strcmp(argv[1],"first") == 0)
 	{
@@ -96,16 +96,16 @@ int main(int argc, char * argv[])
 	return 0;
 }
 
-Process* create(int size)
+Process* create(int size, int tp)
 {
 	Process* arr = new Process[size];
 
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	for (int i = 0; i < size; i++)
 	{
 		int amount = rand() % 90 + 10;
-		Process p(i+65, amount);
+		Process p(i+65, amount, 0, tp);
 		arr[i] = p;
 	}
 	return arr;
