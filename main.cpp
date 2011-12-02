@@ -18,6 +18,8 @@ void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
 void nextFit(Process* p, int ptprob, int npprob);	//Next Fit Algorithm
 void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
 
+bool enterProbability(int prob);
+
 void printMem(); //function to print main memory
 
 char mainMem[2400]; //1-dimentional character array, main memory
@@ -111,20 +113,49 @@ Process* create(int size, int tp)
 	return arr;
 }
 
+bool enterProbability(int prob){ 
+	// RANDOM NUMBER CRAP
+	rand = randomNumber; 
+	//If the number is within the probability return true
+	if(rand < prob) 
+	{ 
+		return true; 
+	}
+	else
+	{ 
+		return false; 
+	} 
+}
+
 void firstFit(Process* p, int ptprob, int npprob)
 {
+	while(somethingOrOther)
+	{
+		if(enterProbability(npprob))
+		{ 
+			//create a new process
+			//then restart loop
+		}
+		else
+		{ 
+			//restart loop
+		}
+	}
 }
 
 void bestFit(Process* p, int ptprob, int npprob)
 {
+	enterProbability(npprob);
 }
 
 void nextFit(Process* p, int ptprob, int npprob)
 {
+	enterProbability(npprob);
 }
 
 void worstFit(Process* p, int ptprob, int npprob)
 {
+	enterProbability(npprob);
 }
 
 void printMem()
