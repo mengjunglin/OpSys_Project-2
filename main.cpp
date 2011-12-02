@@ -11,7 +11,7 @@ using namespace std;
 
 #define ros 80
 
-Process* create(int size, int tp); //function to create an array of processes
+//Process* create(int size, int tp); //function to create an array of processes
 
 void firstFit(Process* p, int ptprob, int npprob);	//First Fit Algorithm
 void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
@@ -19,14 +19,16 @@ void nextFit(Process* p, int ptprob, int npprob);	//Next Fit Algorithm
 void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
 
 bool enterProbability(int prob);
-
 void printMem(); //function to print main memory
 
+int charArrLoc = 0; //counter for the ASCII character 
+int asciiChar[58]; 
 char mainMem[2400]; //1-dimentional character array, main memory
+int used = ros;
 
 int main(int argc, char * argv[])
 {
-	int used = ros, ptp, npp, i, j;
+	int ptp, npp, i, j;
 
 	if (argc != 4)
 	{
@@ -49,18 +51,24 @@ int main(int argc, char * argv[])
 
 	srand(time(NULL)); //set seed to get random numbers
 
-	Process* processes;	//create an array of Process
-	//processes = create(20, ptp); //20 random amount of memory cells
-
-	//assign into main memory
-	for (i = 0; i < 20; i++)
+	Process* processes = new Process[58];	//create an array of Process
+	
+	//create and assign 20 processes into memory
+	for (int i = 0; i < 20; i++)
 	{
-		for(j = 0; j < processes[i].getCellRequired(); j++)
+		int w = nextProcessChar();
+		int amount = rand() % 90 + 10;
+		Process p(i+65, amount, used, ptp);
+		processes[i] = p;
+		for (j = 0; j < amount; j++)
 		{
-			mainMem[j+used] = processes[i].getProcName();
+			mainMem[j+used] = w;
 		}
-		used += processes[i].getCellRequired();
+		//used += amount;
 	}
+
+	//print out main memory
+	printMem();
 
 	if (strcmp(argv[1],"first") == 0)
 	{
@@ -91,33 +99,26 @@ int main(int argc, char * argv[])
 		return 0;
 	}
 
-	//print out main memory
-	printMem();
-
 	system("pause");
 	return 0;
 }
 
-Process* create(int size, int tp)
+/*Process* create(int tp)
 {
 	Process* arr = new Process[size];
 
-	//srand(time(NULL));
+	int amount = rand() % 90 + 10;
+	Process p(i+65, amount, 0, tp);
+	arr[i] = p;
 
-	for (int i = 0; i < size; i++)
-	{
-		int amount = rand() % 90 + 10;
-		Process p(i+65, amount, 0, tp);
-		arr[i] = p;
-	}
 	return arr;
-}
+}*/
 
 bool enterProbability(int prob){ 
 	// RANDOM NUMBER CRAP
-	rand = randomNumber; 
+	int random = rand() % 99 + 1; 
 	//If the number is within the probability return true
-	if(rand < prob) 
+	if(random < prob) 
 	{ 
 		return true; 
 	}
@@ -127,18 +128,69 @@ bool enterProbability(int prob){
 	} 
 }
 
-void firstFit(Process* p, int ptprob, int npprob)
-{
-	while(somethingOrOther)
+int nextProcessChar(){ 
+	int outOfMemory = 0;
+	while(outOfMemory < 58)
 	{
-		if(enterProbability(npprob))
+		if( charArrLoc != 58 ) 
 		{ 
-			//create a new process
-			//then restart loop
+			if( charArrLoc == 0 && asciiChar[charArrLoc] != 1)
+			{
+				asciiChar[charArrLoc] = 1; 
+				charArrLoc++;
+				return 65;
+			}
+			else if( asciiChar[charArrLoc] != 1 ) 
+			{ 
+				int temp; 
+				asciiChar[charArrLoc] = 1;
+				temp = charArrLoc +65; 
+				charArrLoc++;
+				return temp; 
+			}
+			else
+			{
+				charArrLoc++; 
+			} 
 		}
 		else
-		{ 
-			//restart loop
+		{
+			charArrLoc = 0; 
+		}
+		outOfMemory++;
+	}
+	return -1; //if -1 is returned the program is out of memory therefore it should terminate 
+}
+
+void firstFit(Process* p, int ptprob, int npprob)
+{
+	char input;
+	cin >> input; 
+	while( input != 'q' )
+	{
+		if (input == 'c')
+		{
+			if(enterProbability(npprob) == true)
+			{ 
+				int k = nextProcessChar();
+				cout << "k = " << k << endl;
+				int random = rand() % 99 + 1;
+				Process newProcess(k+65, random, used, ptprob); 
+				for (int i = used; i < random; i++)
+				{
+					cout << "hey!!1" << endl;
+					mainMem[i] = k;
+				}
+				//create a new process
+				//then restart loop
+				printMem();
+			}
+			cin >> input;
+		}j
+		else
+		{
+			cout << "Can not understand your request!" << endl;
+			cin >> input;
 		}
 	}
 }
@@ -162,4 +214,5 @@ void printMem()
 {
 	for (int i = 0; i < 2400; i++)
 		cout << mainMem[i];
+	cout << "*********************************" << endl;
 }
