@@ -6,12 +6,14 @@ class Process
 private:
 	char procName;
 	int cellRequired;
+	int termProb;
 
 public:
 	Process();
 	Process(char proc, int cell);
 	char getProcName();
 	int getCellRequired();
+	int getTermProb();
 	void setMemName(char name);
 	void setCellRequired(int cell);
 };
