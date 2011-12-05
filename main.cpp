@@ -19,12 +19,13 @@ void firstFit(vector<Process> &p, int ptprob, int npprob);
 void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
 void nextFit(Process* p, int ptprob, int npprob);	//Next Fit Algorithm
 void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
+void defragmentation(vector<Process> &p);
 
 bool enterProbability(int prob);
 int nextProcessChar();
 int findFit(int length); //function that find the size of the first empty slot
 void printMem(); //function to print main memory
-void createProcess(vector<Process> &proc, int pt);
+int createProcess(vector<Process> &proc, int pt);
 
 int charArrLoc = 0; //counter for the ASCII character 
 int asciiChar[58]; 
@@ -62,7 +63,13 @@ int main(int argc, char * argv[])
 	//create and assign 20 processes into memory
 	for (int i = 0; i < 20; i++)
 	{
-		createProcess(processes, ptp);
+		int check = createProcess(processes, ptp);
+		if(check == -1) 
+		{ 
+			// the program is out of memory so it ends
+			cout << "1: ERROR: Process could not be created" << endl; 
+			return -1; 
+		}
 		for (j = 0; j < processes.back().getCellRequired(); j++)
 		{
 			mainMem[processes.back().getStartPos() + j] = processes.back().getProcName();
@@ -105,122 +112,34 @@ int main(int argc, char * argv[])
 	return 0;
 }
 
-bool enterProbability(int prob){ 
-	// RANDOM NUMBER CRAP
-	int random = rand() % 99 + 1; 
-	//If the number is within the probability return true
-	if(random < prob) 
-	{ 
-		return true; 
-	}
-	else
-	{ 
-		return false; 
-	} 
-}
 
-int nextProcessChar(){ 
-	int outOfMemory = 0;
-	while(outOfMemory < 58)
-	{
-		if( charArrLoc != 58 ) 
-		{ 
-			if( charArrLoc == 0 && asciiChar[charArrLoc] != 1)
-			{
-				asciiChar[charArrLoc] = 1; 
-				charArrLoc++;
-				return 65;
-			}
-			else if( asciiChar[charArrLoc] != 1 ) 
-			{ 
-				int temp; 
-				asciiChar[charArrLoc] = 1;
-				temp = charArrLoc +65; 
-				charArrLoc++;
-				return temp; 
-			}
-			else
-			{
-				charArrLoc++; 
-			} 
-		}
-		else
-		{
-			charArrLoc = 0; 
-		}
-		outOfMemory++;
-	}
-	return -1; //if -1 is returned the program is out of memory therefore it should terminate 
-}
-
-int findFit(int length)
-{
-	int i = ros; // ros = the begining of memory
-	int size = 0; 
-
-	for(i; i < 2400; i++)
-	{
-		size = 0; // reset size 
-		while (mainMem[i] == '.')
-		{	
-			size++;
-			i++;
-			if(size == length)
-				return i-size;  // starting location for memory of this length 
-		} 
-	}
-	//if we get here that means we are out of memory 
-	return -1; 
-
-	return size;
-}
-
-/*void firstFit(Process* p, int ptprob, int npprob)
-{
-	char input;
-	cin >> input; 
-	while( input != 'q' )
-	{
-		if (input == 'c')
-		{
-			//Check for terminated processes
-
-			//attempt to create new process
-			if(enterProbability(npprob) == true)
-			{ 
-				int k = nextProcessChar();
-				int random = rand() % 90 + 10;
-				Process newProcess(k+65, random, findFirstSlot(), ptprob); 
-				for (int i = 0; i < random; i++)
-				{
-					mainMem[findFirstSlot()] = k;
-				}
-				printMem();
-			}
-			cin >> input;
-		}
-		else
-		{
-			cout << "Can not understand your request!" << endl;
-			cin >> input;
-		}
-	}
-}*/
 
 void firstFit(vector<Process> &p, int ptprob, int npprob)
 {
+	cout << "ENTER¡@FIRST FIT FUNCTION " << endl;
 	char input;
-	cin >> input; 
+	cin >> input;
+	vector<Process> pCopy; 
+	//vector<Process>::iterator it;
 	while( input != 'q' )
 	{
 		if (input == 'c')
-		{
-			vector <Process> pCopy = p;
+		{ 
+			pCopy.clear(); 
 			//Check for terminated processes
 			for (int j = 0; j < p.size(); j++)
 			{
 				if (enterProbability(p[j].getTermProb()) == true)
 				{
+					for(int r = 0; r < 58; r++) 
+					{
+						char temp = r + 65;  
+						if(temp == p[j].getProcName())
+						{
+							asciiChar[r] = 0; 
+							break;
+						}
+					}
 					for (int m = 0; m < p[j].getCellRequired(); m++)
 					{
 						mainMem[p[j].getStartPos() + m] = '.';
@@ -231,17 +150,34 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 					pCopy.push_back(p[j]);
 				}
 			}
-
-			p = pCopy;
+			cout << "pCopy size " << pCopy.size() << endl; 
+			cout << "p size " << p.size() << endl; 
+			if(pCopy.size() != p.size())
+			{
+				cout << "p = pCopy" << endl; 
+				//it = pCopy.begin(); 
+				p.clear(); 
+				//p.assign(it, pCopy.end() - 1);
+				p = pCopy;
+				cout << "after p = pCopy call" << endl; 
+			}
 
 			//attempt to create new process
 			if(enterProbability(npprob) == true)
 			{ 
-				createProcess(p, ptprob);
+				cout << "creating new processes" << endl; 
+				int check = createProcess(p, ptprob);
+				if(check == -1) 
+				{ 
+					cout << "2: ERROR: Process could not be created" << endl; 
+					return; 
+				}
+				
 				for (int i = 0; i < p.back().getCellRequired(); i++)
 				{
 					mainMem[p.back().getStartPos() + i] = p.back().getProcName();
 				}
+				cout << "new processes created in main memory" << endl; 
 			}
 			printMem();
 			cin >> input;
@@ -252,6 +188,8 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 			cin >> input;
 		}
 	}
+	cout << "EXIT FIRST FIT FUNCTION " << endl; 
+	return; 
 }
 
 void bestFit(Process* p, int ptprob, int npprob)
@@ -269,16 +207,133 @@ void worstFit(Process* p, int ptprob, int npprob)
 	enterProbability(npprob);
 }
 
-void createProcess(vector<Process> &proc, int pt)
+void defragmentation(vector<Process> &p)
 {
-	int k = nextProcessChar();
-	int len = rand() % 90 + 10;
-	Process newProcess(k, len, findFit(len), pt);
-	proc.push_back(newProcess);
+	int i = 0, count = 0;
+
+	cout << "Performing defragmentation." << endl;
+
+	while(mainMem[i] != '.' && mainMem[i+1])
+	{
+		i++;
+		count++;
+	}
+	for (int j = 0; j < p.size(); j++)
+	{
+		if (mainMem[i] = p[j].getProcName())
+		{
+
+		}
+	}
+
+	cout << "Defragmentation complete." << endl;
+	cout << "Relocated....." << endl;
 }
 
+int createProcess(vector<Process> &proc, int pt)
+{
+	cout << "CREATE PROCESS FUNCTION" << endl; 
+	int k = nextProcessChar();
+	if (k == -1)
+	{
+		// the process could not be created so it sends a -1 flag
+		//cout << "3: ERROR: out of memory" << endl;
+		return -1;
+	}
+	int len = rand() % 90 + 10;
+	int startLocation = findFit(len); 
+	if (startLocation == -1)
+	{
+		cout << "4: ERROR: Out of Memory in Create Process " << endl; 
+		return -1; 
+	}
+	Process newProcess(k, len, startLocation, pt);
+	proc.push_back(newProcess);
+	cout << "END CREATE PROCESS FUNCTION " << endl; 
+	return 0; 
+}
+bool enterProbability(int prob){ 
+	int random = rand() % 99 + 1; 
+	//If the number is within the probability return true
+	if(random < prob) 
+	{ 
+		return true; 
+	}
+	else
+	{ 
+		return false; 
+	} 
+}
+
+int nextProcessChar(){ 
+	int outOfMemory = 0;
+	cout << "NEXT PROCESS CHAR FUNCTION" << endl; 
+	while(outOfMemory < 58)
+	{
+		if( charArrLoc != 58 ) 
+		{ 
+			if( charArrLoc == 0 && asciiChar[charArrLoc] != 1)
+			{
+				asciiChar[charArrLoc] = 1; 
+				charArrLoc++;
+				return 65;
+			}
+			else if( asciiChar[charArrLoc] == 0 ) 
+			{ 
+				int temp; 
+				asciiChar[charArrLoc] = 1;
+				temp = charArrLoc + 65; 
+				charArrLoc++;
+				return temp; 
+			}
+			else
+			{
+				charArrLoc++; 
+			} 
+			outOfMemory++;
+		}
+		else
+		{
+			cout << "CHAR LOCATION IS AT 58" << endl;
+			charArrLoc = 0;
+			outOfMemory = 0; // reset outOfMemory to zero
+			cout << "NEW CHAR LOCATION IS " << charArrLoc << endl; 
+		}
+		cout << "The out of memory number is: "<< outOfMemory << endl; 
+		
+	}
+	cout << "I AM IN A PLACE I SHOULDN'T BE AND I AM RETURNING -1" << endl; 
+	return -1; //if -1 is returned the program is out of memory therefore it should terminate 
+}
+
+int findFit(int length)
+{
+	cout << "FIND FIT FUNCTION" << endl;
+
+	int i = ros; // ros = the begining of memory
+	int size = 0; 
+ 
+	for(i; i < 2400; i++)
+	{
+		size = 0; // reset size 
+		while (mainMem[i] == '.')
+		{	
+			size++;
+			i++;
+			if(size == length)
+			{
+				cout << "FIND FIT size == length END" << endl; 
+				return i-size;  // starting location for memory of this length 
+			}
+		} 
+	}
+	//if we get here that means we are out of memory 
+	cout << "FIND FIT OUT OF MEMORY" << endl; 
+	return -1; 
+}
 void printMem()
 {
+	cout << "PRINT MEMORY FUNCTION " << endl; 
 	for (int i = 0; i < 2400; i++)
 		cout << mainMem[i];
 	cout << "*********************************" << endl;
