@@ -22,9 +22,9 @@ void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
 
 bool enterProbability(int prob);
 int nextProcessChar();
-int findFirstSlot(); //function that find the first location of an empty slot
-int findFirstSize(); //function that find the size of the first empty slot
+int findFit(int length); //function that find the size of the first empty slot
 void printMem(); //function to print main memory
+void createProcess(vector<Process> &proc, int pt);
 
 int charArrLoc = 0; //counter for the ASCII character 
 int asciiChar[58]; 
@@ -62,14 +62,10 @@ int main(int argc, char * argv[])
 	//create and assign 20 processes into memory
 	for (int i = 0; i < 20; i++)
 	{
-		int w = nextProcessChar();
-		int amount = rand() % 90 + 10;
-		Process p(i+65, amount, findFirstSlot(), ptp); 
-		//processes[i] = p;
-		processes.push_back(p);
-		for (j = 0; j < amount; j++)
+		createProcess(processes, ptp);
+		for (j = 0; j < processes.back().getCellRequired(); j++)
 		{
-			mainMem[findFirstSlot()] = w;
+			mainMem[processes.back().getStartPos() + j] = processes.back().getProcName();
 		}
 	}
 
@@ -108,17 +104,6 @@ int main(int argc, char * argv[])
 	system("pause");
 	return 0;
 }
-
-/*Process* create(int tp)
-{
-	Process* arr = new Process[size];
-
-	int amount = rand() % 90 + 10;
-	Process p(i+65, amount, 0, tp);
-	arr[i] = p;
-
-	return arr;
-}*/
 
 bool enterProbability(int prob){ 
 	// RANDOM NUMBER CRAP
@@ -168,26 +153,24 @@ int nextProcessChar(){
 	return -1; //if -1 is returned the program is out of memory therefore it should terminate 
 }
 
-int findFirstSlot()
+int findFit(int length)
 {
-	int i = ros;
+	int i = ros; // ros = the begining of memory
+	int size = 0; 
 
-	while(mainMem[i] != '.')
+	for(i; i < 2400; i++)
 	{
-		i++;
+		size = 0; // reset size 
+		while (mainMem[i] == '.')
+		{	
+			size++;
+			i++;
+			if(size == length)
+				return i-size;  // starting location for memory of this length 
+		} 
 	}
-	
-	return i;
-}
-
-int findFirstSize()
-{
-	int i = findFirstSlot(), size = 0;
-
-	while (mainMem[i] == '.')
-	{
-		size++;
-	}
+	//if we get here that means we are out of memory 
+	return -1; 
 
 	return size;
 }
@@ -232,6 +215,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 	{
 		if (input == 'c')
 		{
+			vector <Process> pCopy = p;
 			//Check for terminated processes
 			for (int j = 0; j < p.size(); j++)
 			{
@@ -241,22 +225,24 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 					{
 						mainMem[p[j].getStartPos() + m] = '.';
 					}
-					p.erase(p.begin() + j);
+				}
+				else
+				{
+					pCopy.push_back(p[j]);
 				}
 			}
 
+			p = pCopy;
+
 			//attempt to create new process
-			/*if(enterProbability(npprob) == true)
+			if(enterProbability(npprob) == true)
 			{ 
-				int k = nextProcessChar();
-				int random = rand() % 90 + 10;
-				Process newProcess(k+65, random, findFirstSlot(), ptprob);
-				p.push_back(newProcess);
-				for (int i = 0; i < random; i++)
+				createProcess(p, ptprob);
+				for (int i = 0; i < p.back().getCellRequired(); i++)
 				{
-					mainMem[findFirstSlot()] = k;
+					mainMem[p.back().getStartPos() + i] = p.back().getProcName();
 				}
-			}*/
+			}
 			printMem();
 			cin >> input;
 		}
@@ -281,6 +267,14 @@ void nextFit(Process* p, int ptprob, int npprob)
 void worstFit(Process* p, int ptprob, int npprob)
 {
 	enterProbability(npprob);
+}
+
+void createProcess(vector<Process> &proc, int pt)
+{
+	int k = nextProcessChar();
+	int len = rand() % 90 + 10;
+	Process newProcess(k, len, findFit(len), pt);
+	proc.push_back(newProcess);
 }
 
 void printMem()
