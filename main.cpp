@@ -113,6 +113,10 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 			/* should be created based on the probability */
 			if(checkProbability(npprob) == true) { 
 				check = createProcess(p, ptprob);
+				if(check == -1) { 
+					cout << "5: ERROR: Unable to create a new process. System is out of memory" << endl; 
+					return; 
+				}
 				i = ros; 
 				while(i < 2400) {
 					size = 0;
@@ -198,7 +202,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 				i = ros;
 				bestFit = 2401; 
 				bestFitStartLoc = 2401; 
-				while(i < 2400) { 
+				while(i < 2400) {
 					while(mainMem[i] == '.') {
 						count++;
 						i++;
@@ -219,16 +223,19 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 					else {
 						i++;
 					}
+
 					/* a new process was unable to be created and added to the memory
 					* the program will attempt to defrag */ 
-					if (i == 2399 && bestFit != 0) {
+					if (i == 2400 && bestFit == 2401) {
 						defrag = defragmentation(p);
 						if(defrag == -1) {
 							cout << "6: ERROR: Out of Memory, unable to perform defragmentation" << endl; 
 							return; 
 						}
 						else { 
-							i = 0; 
+							printMem();
+							cout << "After defrag then attempt to create new process." << endl;
+							i = ros;
 						}
 					}
 				}
