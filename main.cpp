@@ -141,8 +141,6 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 								return; 
 							}
 							else {
-								printMem();
-								cout << "After defrag then attempt to create new process." << endl;
 								i = ros;
 								size = 0;
 							}
@@ -233,8 +231,6 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 							return; 
 						}
 						else { 
-							printMem();
-							cout << "After defrag then attempt to create new process." << endl;
 							i = ros;
 						}
 					}
