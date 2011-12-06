@@ -169,7 +169,8 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 				int check = createProcess(p, ptprob);
 				if(check == -1) 
 				{ 
-					cout << "2: ERROR: Process could not be created" << endl; 
+					cout << "2: ERROR: Process could not be created" << endl;
+					defragmentation(p);
 					return; 
 				}
 				
@@ -213,16 +214,25 @@ void defragmentation(vector<Process> &p)
 
 	cout << "Performing defragmentation." << endl;
 
-	while(mainMem[i] != '.' && mainMem[i+1])
+	while (i < 2400)
 	{
-		i++;
-		count++;
-	}
-	for (int j = 0; j < p.size(); j++)
-	{
-		if (mainMem[i] = p[j].getProcName())
+		while(mainMem[i] != '.' && mainMem[i] != mainMem[i+1])
 		{
-
+			cout << "testing~~~" << endl;
+			i++; //by the end it represent size of the process
+		}
+		for (int j = 0; j < p.size(); j++) //search through the vector of process to find the char
+		{
+			cout << "loop 1111111111" << endl;
+			if (mainMem[i] = p[j].getProcName()) //when found the char
+			{
+				for (int k = 0; k < p[j].getCellRequired(); k++)
+				{
+					cout << "loop 222222222" << endl;
+					p[j].setStartPos(i-p[j].getCellRequired()); //reset starting position of each process
+					mainMem[p[j].getStartPos() + k] = p[j].getProcName();
+				}
+			}
 		}
 	}
 
@@ -255,7 +265,7 @@ int createProcess(vector<Process> &proc, int pt)
 bool enterProbability(int prob){ 
 	int random = rand() % 99 + 1; 
 	//If the number is within the probability return true
-	if(random < prob) 
+	if(random <= prob) 
 	{ 
 		return true; 
 	}
