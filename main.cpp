@@ -10,21 +10,19 @@
 #include "mem.h"
 using namespace std;
 
-#define ros 80
+#define ros 80	//resident operating system
 
-//Process* create(int size, int tp); //function to create an array of processes
-
-void firstFit(vector<Process> &p, int ptprob, int npprob);
+void firstFit(vector<Process> &p, int ptprob, int npprob);	//First Fit Algorithm
 void bestFit(vector<Process> &p, int ptprob, int npprob);	//Best Fit Algorithm
 void nextFit(vector<Process> &p, int ptprob, int npprob);	//Next Fit Algorithm
 void worstFit(vector<Process> &p, int ptprob, int npprob);	//Worst Fit Algorithm
-int defragmentation(vector<Process> &p);
+int defragmentation(vector<Process> &p);	//Defragmentation Algorithm
 
-bool enterProbability(int prob);
-int nextProcessChar();
+bool enterProbability(int prob); //function that decide if a process is terminated or created base on the given probability
+int nextProcessChar(); //function that check for the next available character for new process
 int findFit(int length); //function that find the size of the first empty slot
 void printMem(); //function to print main memory
-int createProcess(vector<Process> &proc, int pt);
+int createProcess(vector<Process> &proc, int pt); //function that create a new process and push it back to the vector
 int findMatch(vector<Process> &proc, char procName);
 void checkTerminate(vector<Process> & proce); //function that check for terminated processes
 
@@ -261,7 +259,7 @@ int defragmentation(vector<Process> &p)
 {
 	int i = ros, empty = 0, tempStart, oldEnd = 0, newEnd = 0, freeCells = 0, numProc = 0, 
 			x, pLoc, tempOldEnd, j, oldStart, oldLen, tempNewEnd;
-	bool defrag = false, breakup = false; 
+	bool defrag = false, breakLoop = false; 
 	double per;
 	
 	while (i < 2400)
