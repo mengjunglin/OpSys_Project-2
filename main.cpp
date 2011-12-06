@@ -226,7 +226,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 
 					/* a new process was unable to be created and added to the memory
 					* the program will attempt to defrag */ 
-					if (i == 2400 && bestFit == 2401) {
+					if (i == 2400 && bestFit == 2401) { //this means it reaches the end of mainMem and current-best-fit never changes (could not fit new process into any empty spot)
 						defrag = defragmentation(p);
 						if(defrag == -1) {
 							cout << "6: ERROR: Out of Memory, unable to perform defragmentation" << endl; 
