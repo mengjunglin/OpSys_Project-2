@@ -209,8 +209,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 							break;
 						}
 					} 
-					if(count < bestFit && count >= p.back().getCellRequired())
-					{
+					if(count < bestFit && count >= p.back().getCellRequired()) {
 						bestFit = count; 
 						bestFitStartLoc = i - count; 
 					}
@@ -224,7 +223,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 
 					/* a new process was unable to be created and added to the memory
 					* the program will attempt to defrag */ 
-					if (i == 2400 && bestFit == 2401) { //this means it reaches the end of mainMem and current-best-fit never changes (could not fit new process into any empty spot)
+					if (i == 2400 && bestFit == 2401) { 
 						defrag = defragmentation(p);
 						if(defrag == -1) {
 							cout << "6: ERROR: Out of Memory, unable to perform defragmentation" << endl; 
@@ -237,12 +236,10 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 				}
 				totalSizeRequired = bestFitStartLoc + p.back().getCellRequired();
 				p.back().setStartPos(bestFitStartLoc); 
-				for(x = bestFitStartLoc; x < totalSizeRequired; x ++)
-				{
+				for(x = bestFitStartLoc; x < totalSizeRequired; x ++) {
 					mainMem[x] = p.back().getProcName(); 
 				}
 			}
-
 			printMem();
 			cin >> input;
 		}
