@@ -19,13 +19,14 @@ void firstFit(vector<Process> &p, int ptprob, int npprob);
 void bestFit(Process* p, int ptprob, int npprob);	//Best Fit Algorithm
 void nextFit(Process* p, int ptprob, int npprob);	//Next Fit Algorithm
 void worstFit(Process* p, int ptprob, int npprob);	//Worst Fit Algorithm
-void defragmentation(vector<Process> &p);
+int defragmentation(vector<Process> &p);
 
 bool enterProbability(int prob);
 int nextProcessChar();
 int findFit(int length); //function that find the size of the first empty slot
 void printMem(); //function to print main memory
 int createProcess(vector<Process> &proc, int pt);
+int findMatch(vector<Process> &proc, char procName); 
 
 int charArrLoc = 0; //counter for the ASCII character 
 int asciiChar[58]; 
@@ -170,8 +171,12 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 				if(check == -1) 
 				{ 
 					cout << "2: ERROR: Process could not be created" << endl;
-					defragmentation(p);
-					return; 
+					int def = defragmentation(p);
+					if(def == -1) 
+					{
+						cout << "5: ERROR: Out of Memory, unable to perform defragmentation" << endl; 
+						return; 
+					}
 				}
 				
 				for (int i = 0; i < p.back().getCellRequired(); i++)
@@ -208,36 +213,106 @@ void worstFit(Process* p, int ptprob, int npprob)
 	enterProbability(npprob);
 }
 
-void defragmentation(vector<Process> &p)
+int defragmentation(vector<Process> &p)
 {
-	int i = 0, count = 0;
+	int i = ros, empty = 0, tempStart;
 
 	cout << "Performing defragmentation." << endl;
+	bool defrag = false; 
+	int freeCells = 0, numProc = 0;
+	int oldEnd = 0, newEnd = 0;
+	double per;
 
+	cout << "oldEnd first set to " << oldEnd << endl << endl;
 	while (i < 2400)
 	{
-		while(mainMem[i] != '.' && mainMem[i] != mainMem[i+1])
+		if(mainMem[i] == '.') 
 		{
-			cout << "testing~~~" << endl;
-			i++; //by the end it represent size of the process
-		}
-		for (int j = 0; j < p.size(); j++) //search through the vector of process to find the char
-		{
-			cout << "loop 1111111111" << endl;
-			if (mainMem[i] = p[j].getProcName()) //when found the char
+			bool breakLoop = false; 
+			for(int x = i; x < 2400; x ++) 
 			{
-				for (int k = 0; k < p[j].getCellRequired(); k++)
+				if (x == 2399)
 				{
-					cout << "loop 222222222" << endl;
-					p[j].setStartPos(i-p[j].getCellRequired()); //reset starting position of each process
-					mainMem[p[j].getStartPos() + k] = p[j].getProcName();
+					i = 2400;
+				}
+				if(mainMem[x] != '.') 
+				{
+					defrag = true; 
+					// the memory is in use and needs to be shifted 
+					int pLoc = findMatch(p, mainMem[x]);
+					int tempOldEnd, j, oldStart, oldLen, tempNewEnd; 
+
+					tempOldEnd = p[pLoc].getStartPos() + p[pLoc].getCellRequired();
+					if(tempOldEnd > oldEnd)
+					{
+						oldEnd = tempOldEnd; 
+					}
+
+					oldLen = p[pLoc].getStartPos() + p[pLoc].getCellRequired();
+					p[pLoc].setStartPos(i); 
+
+					for(j = i; j < i + p[pLoc].getCellRequired(); j ++) 
+					{
+						// sets from i to the cell required with the mem name
+						mainMem[j] = p[pLoc].getProcName();
+						tempNewEnd = p[pLoc].getStartPos() + p[pLoc].getCellRequired();
+						if(tempNewEnd > newEnd)
+						{
+							newEnd = tempNewEnd; 
+						}
+					}
+
+					oldStart = j; 
+
+					for(j = oldStart; j < oldLen; j++) 
+					{
+						mainMem[j] = '.'; 
+						breakLoop = true;
+					}
+					if(breakLoop == true) 
+					{
+						numProc++;
+						i += p[pLoc].getCellRequired();
+						break;
+					}
 				}
 			}
 		}
+		else
+		{
+			i++;
+		}
 	}
+	//newEnd = p.back().getStartPos() + p.back().getCellRequired();
+	freeCells = oldEnd - newEnd;
+	cout << "oldEnd = " << oldEnd << " ; newEnd = " << newEnd << endl;
+
+	per = ((double)freeCells / (double)2400) * (double)100;
 
 	cout << "Defragmentation complete." << endl;
-	cout << "Relocated....." << endl;
+	cout << "Relocated " << numProc << " processes to create free memory block of " << freeCells << " units (" << per << "% of total memory)." << endl;
+	if(defrag == true)
+	{
+		return 1; 
+	}
+	else
+	{
+		// unable to complete defragmentation (OUT OF MEMORY)
+		return -1; 
+	}
+}
+
+int findMatch(vector<Process> &proc, char procName) 
+{
+	int i = 0; 
+	for(i; i < proc.size(); i ++) 
+	{
+		if(proc[i].getProcName() == procName)
+		{
+			return i;
+		}
+	}
+	return -1; 
 }
 
 int createProcess(vector<Process> &proc, int pt)
