@@ -152,7 +152,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 void bestFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
-	int bestFit = 2401, bestFitStartLoc = 2401, i = ros, count = 0, check, defrag;
+	int bestFit = 2401, bestFitStartLoc = 2401, i = ros, count = 0, check, defrag, x;
 	bool breakLoop = false; 
 
 	cin >> input;
@@ -224,7 +224,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 			{
 				cout << "BEST FIT CRAP" << endl; 
 				p.back().setStartPos(bestFitStartLoc);
-				for(int x = bestFitStartLoc; x < p.back().getCellRequired(); x++)
+				for(x = bestFitStartLoc; x < p.back().getCellRequired(); x++)
 				{
 					mainMem[x] = p.back().getProcName(); 
 				}
@@ -294,25 +294,19 @@ int defragmentation(vector<Process> &p)
 					oldLen = p[pLoc].getStartPos() + p[pLoc].getCellRequired();
 					p[pLoc].setStartPos(i); 
 					/* main memory is updated to shift the process over */ 
-					for(j = i; j < i + p[pLoc].getCellRequired(); j ++) 
-					{
+					for(j = i; j < i + p[pLoc].getCellRequired(); j ++) {
 						mainMem[j] = p[pLoc].getProcName();
 						tempNewEnd = p[pLoc].getStartPos() + p[pLoc].getCellRequired();
-						if(tempNewEnd > newEnd)
-						{
+						if(tempNewEnd > newEnd) {
 							newEnd = tempNewEnd; 
 						}
 					}
-
-					oldStart = j; 
-
-					for(j = oldStart; j < oldLen; j++) 
-					{
+					oldStart = j;
+					for(j = oldStart; j < oldLen; j++) {
 						mainMem[j] = '.'; 
 						breakLoop = true;
 					}
-					if(breakLoop == true) 
-					{
+					if(breakLoop == true) {
 						numProc++;
 						i += p[pLoc].getCellRequired();
 						break;
@@ -320,43 +314,49 @@ int defragmentation(vector<Process> &p)
 				}
 			}
 		}
-		else
-		{
+		else {
 			i++;
 		}
 	}
 
-	freeCells = oldEnd - newEnd;
-	cout << "oldEnd = " << oldEnd << " ; newEnd = " << newEnd << endl;
-
-	per = ((double)freeCells / (double)2400) * (double)100;
-
-	cout << "Defragmentation complete." << endl;
-	cout << "Relocated " << numProc << " processes to create free memory block of " << freeCells << " units (" << per << "% of total memory)." << endl;
-	if(defrag == true)
-	{
+	/* if the program was able to defragment at all 
+	 * during this iteration of the defragmentation function
+	 * than defrag = true and the program returns a 1 
+	 * otherwise the program was unable to defrag which 
+	 * means it is out of memory and -1 is returned */ 
+	if(defrag == true) {
+		freeCells = oldEnd - newEnd;
+		per = ((double)freeCells / (double)2400) * (double)100;
+		cout << "Defragmentation complete." << endl;
+		cout << "Relocated " << numProc << " processes to create free memory block of " 
+			<< freeCells << " units (" << per << "% of total memory)." << endl;
 		return 1; 
 	}
-	else
-	{
-		// unable to complete defragmentation (OUT OF MEMORY)
+	else {
 		return -1; 
 	}
 }
 
-int findMatch(vector<Process> &proc, char procName) 
-{
+/* find match searches through the processes to find 
+ * the process that is being looked at in main memory 
+ * since the processes might not be in order of their 
+ * vector location it is necessary to find the processes 
+ * that matches the character in main memory */ 
+int findMatch(vector<Process> &proc, char procName) {
 	int i = 0; 
-	for(i; i < proc.size(); i ++) 
-	{
-		if(proc[i].getProcName() == procName)
-		{
+	for(i; i < proc.size(); i ++) {
+		if(proc[i].getProcName() == procName){
 			return i;
 		}
 	}
+	/* if the process is not found then -1 is returned 
+	 * to trigger an error had occured */ 
 	return -1; 
 }
 
+/* create process adds in the new process to the 
+ * process vector if there is an available character 
+ * in main memory */ 
 int createProcess(vector<Process> &proc, int pt)
 {
 	int k = nextProcessChar();
