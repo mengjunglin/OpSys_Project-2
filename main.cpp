@@ -342,20 +342,17 @@ int findMatch(vector<Process> &proc, char procName) {
 int createProcess(vector<Process> &proc, int pt)
 {
 	int k = nextProcessChar(), len, startLocation;
-	if (k == -1)
-	{
-		// the process could not be created so it sends a -1 flag
-		//cout << "3: ERROR: out of memory" << endl;
+	
+	if (k == -1) {
 		return -1;
 	}
 	len = rand() % 90 + 10;
 	startLocation = findFit(len); 
-	if (startLocation == -1)
-	{
+	if (startLocation == -1) {
 		cout << "4: ERROR: Out of Memory in Create Process " << endl; 
 		return -1; 
 	}
- 
+	
 	Process newProcess(k, len, startLocation, pt);
 	proc.push_back(newProcess);
  
@@ -378,7 +375,7 @@ bool enterProbability(int prob){
 /* next process char returns the ASCII value of the next 
  * available process character or an out of memory 
  * error if there are no more characters */ 
-int nextProcessChar(){ 
+int nextProcessChar() { 
 	int outOfMemory = 0, temp;
 	
 	while(outOfMemory < 58) {
@@ -440,8 +437,7 @@ void checkTerminate(vector<Process> &p)
 	char temp; 
 	int j, r, m;
 
-	for (j = 0; j < p.size(); j++)
-	{
+	for (j = 0; j < p.size(); j++)  {
 		if (enterProbability(p[j].getTermProb()) == true) {
 			for(r = 0; r < 58; r++) {
 				temp = r + 65;  
