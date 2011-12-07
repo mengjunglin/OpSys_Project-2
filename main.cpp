@@ -81,16 +81,14 @@ int main(int argc, char * argv[])
 		bestFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"next") == 0) {
-//		nextFit(processes, ptp, npp);
+		nextFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"worst") == 0) {
-//		worstFit(processes, ptp, npp);
+		worstFit(processes, ptp, npp);
 	}
 	else {
 		cout << "INVALID INPUT: Please re-run with first, best, next, or worst " << endl; 
 		cout << "with <process-termination-probability> and <new-process-probability> " << endl;
-		system("pause");
-		return 0;
 	}
 	system("pause");
 	return 0;
@@ -253,12 +251,152 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 
 void nextFit(vector<Process> &p, int ptprob, int npprob)
 {
-	checkProbability(npprob);
+	char input;
+	int defrag, check, i, tempStartLoc = 0; 
+	bool breakLoop = false; 
+
+	for(int x = ros; x < 2400;  x ++) 
+	{
+		if(mainMem[x] == '.') 
+		{
+			i = x;  
+			break;
+		}
+	}
+
+	cin >> input;
+	
+	while( input != 'q' ) {
+		if (input == 'c') { 
+			checkTerminate(p);
+			/* checkProbability will return true if a new process 
+			/* should be created based on the probability */
+			if(checkProbability(npprob) == true) { 
+				check = createProcess(p, ptprob);
+				if(check == -1) { 
+					cout << "5: ERROR: Unable to create a new process. System is out of memory" << endl; 
+					return; 
+				}
+				while(i < 2400) {
+					bool periodFound = false;
+					int leftOver = 2400 - i; 
+					/* since we are doing next we do not have to worry about 
+					 * missing an empty space. Once the process hits the end of 
+					 * memory, defragmentation is performed then we are pushing back 
+					 * to the last position */ 
+					if( leftOver >= p.back().getCellRequired() ) {
+						p.back().setStartPos(i);
+						for(int y = i; y < i+p.back().getCellRequired(); y ++){
+							mainMem[y] = p.back().getProcName();
+							tempStartLoc++;
+						} 
+						i += p.back().getCellRequired();
+						break;
+					}
+					/* the process will not fit at the "next" location in main memory
+					 * therefore we must do defragmentation */ 
+					else {
+						defrag = defragmentation(p);
+						/* if defragmentation is unable to happen since the 
+						 * main memory is currently defragmented than it is 
+						 * out of memory and will end the program */ 
+						if(defrag == -1) {
+							cout << "5: ERROR: Unable to perform defragmentation. System is out of memory" << endl; 
+							return; 
+						}
+						else{
+							//i = ros;
+							for(int x = ros; x < 2400;  x ++) {
+								if(mainMem[x] == '.') {
+									i = x; 
+									break;
+								}
+							}
+						}
+					}
+				
+				}
+			}
+			printMem();
+			cin >> input;
+		}
+		else {
+			cout << "INVALID COMMAND: Please enter either c or q to continue or quit" << endl;
+			cin >> input;
+		}
+	} 
+	return; 
 }
 
 void worstFit(vector<Process> &p, int ptprob, int npprob)
 {
-	checkProbability(npprob);
+	char input;
+	int worstFit, worstFitStartLoc, i, count = 0, 
+		check, x, pLoc, defrag, totalSizeRequired;
+	bool breakLoop = false, periodFound = false; 
+
+	cin >> input;
+	while( input != 'q' ) {
+		if (input == 'c') {
+			checkTerminate(p);
+			if(checkProbability(npprob) == true) { 
+				check = createProcess(p, ptprob);
+				if(check == -1) { 
+					cout << "5: ERROR: Unable to create a new process. System is out of memory" << endl; 
+					return; 
+				}
+				i = ros;
+				worstFit = 0; 
+				worstFitStartLoc = 0; 
+				while(i < 2400) {
+					while(mainMem[i] == '.') {
+						count++;
+						i++;
+						periodFound = true; 
+						if(i == 2400) {
+							break;
+						}
+					} 
+					if(count > worstFit && count >= p.back().getCellRequired()) {
+						worstFit = count; 
+						worstFitStartLoc = i - count; 
+					}
+					count = 0;
+					if(periodFound == true) {
+						periodFound = false;
+					}
+					else {
+						i++;
+					}
+
+					/* a new process was unable to be created and added to the memory
+					* the program will attempt to defrag */ 
+					if (i == 2400 && worstFit == 0) { 
+						defrag = defragmentation(p);
+						if(defrag == -1) {
+							cout << "6: ERROR: Out of Memory, unable to perform defragmentation" << endl; 
+							return; 
+						}
+						else { 
+							i = ros;
+						}
+					}
+				}
+				totalSizeRequired = worstFitStartLoc + p.back().getCellRequired();
+				p.back().setStartPos(worstFitStartLoc); 
+				for(x = worstFitStartLoc; x < totalSizeRequired; x ++) {
+					mainMem[x] = p.back().getProcName(); 
+				}
+			}
+			printMem();
+			cin >> input;
+		}
+		else {
+			cout << "INVALID COMMAND: Please enter either c or q to continue or quit" << endl;
+			cin >> input;
+		}
+	}
+	return;
 }
 
 int defragmentation(vector<Process> &p)
