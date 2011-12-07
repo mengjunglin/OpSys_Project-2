@@ -21,15 +21,14 @@ int defragmentation(vector<Process> &p);
 
 bool checkProbability(int prob); 
 int nextProcessChar(); 
-int findFit(int length); 
 int createProcess(vector<Process> &proc, int pt); 
 int findMatch(vector<Process> &proc, char procName);
 void checkTerminate(vector<Process> & proce); 
 void printMem();
 
 int charArrLoc = 0; // counter for the ASCII character 
-int asciiChar[58]; 
-char mainMem[2400]; // 1-dimentional character array, main memory
+int asciiChar[58]; // an array to keep track of whether a character is already used and still in the memory
+char mainMem[2400]; // Main Memory, the 1-dimentional character array
 
 int main(int argc, char * argv[])
 {
@@ -252,6 +251,10 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 	return;
 }
 
+/* next fit attempt to put the process into the next empty
+ * and large enough space found in the memory, if the system
+ * runs out of memory, the system will first attemp to perform
+ * defragmentation before it attempts to allocate new process */
 void nextFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
@@ -331,6 +334,9 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 	return; 
 }
 
+/* worst fit looks for an empty space in the memory that is large
+ * enough for the new process and has the biggest difference in
+ * size, then allocate the space with the new process */
 void worstFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
@@ -402,6 +408,11 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 	return;
 }
 
+/* noncontiguous attempts to fill in all empty spaces in the
+ * memroy whether it is large enough for the new process or
+ * not. If the space is not large enough for the new process,
+ * the process will slice itself up to fit into the space and
+ * the ramaining parts will look for next empty space */
 void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
@@ -472,6 +483,10 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 	return; 
 }
 
+/* defragmentation will attemp to push all processes forward
+ * in the memory to fill up any empty spaces, this way the
+ * system can free up spaces and have continuous chunk in the
+ * of the memory */
 int defragmentation(vector<Process> &p)
 {
 	int i = ros, empty = 0, tempStart, oldEnd = 0, newEnd = 0, freeCells = 0, numProc = 0, 
@@ -633,28 +648,6 @@ int nextProcessChar() {
 	return -1;
 }
 
-/* find fit finds the location that the process will 
- * be able to fit into  */ 
-//int findFit(int length)
-//{
-//	// ros is the beginning of memory
-//	int i, size = 0;  
-// 
-//	for(i = ros; i < 2400; i++) {
-//		size = 0;
-//		while (mainMem[i] == '.') {	
-//			size++;
-//			i++;
-//			if(size == length) {
-//				/* the return value of i-size is the starting location
-//				 * for the process in main memory */ 
-//				return i - size; 
-//			}
-//		} 
-//	}
-//	return -1; 
-//}
-
 /* check terminate checks if the process should terminate 
  * based on the probability given by the user input */ 
 void checkTerminate(vector<Process> &p)
@@ -687,6 +680,8 @@ void checkTerminate(vector<Process> &p)
 	}
 	return; 
 }
+
+/* prints out all 2400 spaces */
 void printMem()
 {
 	int i; 
