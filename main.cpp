@@ -15,7 +15,8 @@ using namespace std;
 void firstFit(vector<Process> &p, int ptprob, int npprob);	
 void bestFit(vector<Process> &p, int ptprob, int npprob);	
 void nextFit(vector<Process> &p, int ptprob, int npprob);	
-void worstFit(vector<Process> &p, int ptprob, int npprob);	
+void worstFit(vector<Process> &p, int ptprob, int npprob);
+void noncontiguous(vector<Process> &p, int ptprob, int npprob);
 int defragmentation(vector<Process> &p);	
 
 bool checkProbability(int prob); 
@@ -36,7 +37,7 @@ int main(int argc, char * argv[])
 	vector <Process> processes;
 
 	if (argc != 4) {
-		cout << "USAGE: memsim { first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
+		cout << "USAGE: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
 		system("pause");
 		return 0;
 	}
@@ -86,9 +87,11 @@ int main(int argc, char * argv[])
 	else if (strcmp(argv[1],"worst") == 0) {
 		worstFit(processes, ptp, npp);
 	}
+	else if (strcmp(argv[1],"noncontiguous") == 0) {
+		noncontiguous(processes, ptp, npp);
+	}
 	else {
-		cout << "INVALID INPUT: Please re-run with first, best, next, or worst " << endl; 
-		cout << "with <process-termination-probability> and <new-process-probability> " << endl;
+		cout << "USAGE: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
 	}
 	system("pause");
 	return 0;
@@ -397,6 +400,76 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 		}
 	}
 	return;
+}
+
+void noncontiguous(vector<Process> &p, int ptprob, int npprob)
+{
+	char input;
+	int defrag, check, i, size, r, m, n, temp, count; 
+	bool breakLoop = false; 
+
+	cin >> input;
+	
+	while( input != 'q' ) {
+		if (input == 'c') { 
+			//loop to check for terminated process
+			for (int j = 0; j < p.size(); j++)
+			{
+				if (checkProbability(p[j].getTermProb()) == true) {
+					for(r = 0; r < 58; r++) {
+						temp = r + 65;  
+						if(temp == p[j].getProcName()) {
+							asciiChar[r] = 0; 
+							break;
+						}
+					}
+					for (m = ros; m < 2400; m++) {
+						if (mainMem[m] == p[j].getProcName())
+						{
+							mainMem[m] = '.';
+						}
+					}
+				}
+			}
+			/* checkProbability will return true if a new process 
+			/* should be created based on the probability */
+			if(checkProbability(npprob) == true) { 
+				check = createProcess(p, ptprob);
+				if(check == -1) { 
+					cout << "5: ERROR: Unable to create a new process. System is out of memory" << endl; 
+					return; 
+				}
+				
+				count = p.back().getCellRequired();
+				//Do all the crap here!!!
+				for (n = ros; n < 2400; n++)
+				{
+					if (mainMem[n] == '.' && count > 0)
+					{
+						mainMem[n] = p.back().getProcName();
+						count--;
+					}
+					if (n == 2399)
+					{
+						printMem();
+						cout << "9: ERROR: Out of memory" << endl;
+						return;
+					}
+					if (count == 0)
+					{
+						break;
+					}
+				}
+			}
+			printMem();
+			cin >> input;
+		}
+		else {
+			cout << "INVALID COMMAND: Please enter either c or q to continue or quit" << endl;
+			cin >> input;
+		}
+	} 
+	return; 
 }
 
 int defragmentation(vector<Process> &p)
