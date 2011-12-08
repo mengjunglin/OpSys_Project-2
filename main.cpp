@@ -26,13 +26,13 @@ int findMatch(vector<Process> &proc, char procName);
 void checkTerminate(vector<Process> & proce); 
 void printMem();
 
-int charArrLoc = 0; // counter for the ASCII character 
-int asciiChar[58]; // an array to keep track of whether a character is already used and still in the memory
-char mainMem[2400]; // Main Memory, the 1-dimentional character array
+int charArrLoc = 0; /* Counter for the ASCII character */
+int asciiChar[58]; 	/* An array to keep track of whether a character is already used and still in the memory */ 
+char mainMem[2400]; /* Main Memory, the 1-dimentional character array */ 
 
 int main(int argc, char * argv[])
 {
-	int ptp, npp, i, j, check;
+	int ptp, npp, i, j, check, startPos;
 	vector <Process> processes;
 
 	if (argc != 4) {
@@ -53,7 +53,7 @@ int main(int argc, char * argv[])
 		}
 	}
 	srand(time(NULL)); 
-	int startPos = ros;
+	startPos = ros;
 	// create and assign 20 processes into memory
 	for (int i = 0; i < 20; i++){
 		check = createProcess(processes, ptp);
@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
 		 * Memory and should report that to the user and terminate */ 
 		if(check == -1) { 
 			cout << "1: ERROR: Process could not be created" << endl; 
-			//return -1; 
+			return -1; 
 		}
 		processes.back().setStartPos(startPos);
 		/* if the program is not out of memory than add the new
@@ -130,8 +130,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 							breakLoop = true; 
 							break;
 						}
-						if( i == 2400 ) 
-						{
+						if( i == 2400 ) {
 							defrag = defragmentation(p);
 							/* if defragmentation is unable to happen since the 
 							 * main memory is currently defragmented than it is 
@@ -156,8 +155,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 				/* if defrgamentation happens than the new process 
 				 * is able to be pushed into main memory where the 
 				 * starting position is the first '.' in main memory */ 
-				if(p.back().getStartPos() == -1)
-				{
+				if(p.back().getStartPos() == -1) {
 					cout << "7: ERROR: Out of Memory" << endl; 
 					return; 
 				}
@@ -258,20 +256,17 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 void nextFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
-	int defrag, check, i, tempStartLoc = 0; 
+	int defrag, check, i, tempStartLoc = 0, x; 
 	bool breakLoop = false; 
 
-	for(int x = ros; x < 2400;  x ++) 
-	{
-		if(mainMem[x] == '.') 
-		{
+	for(int x = ros; x < 2400;  x ++) {
+		if(mainMem[x] == '.') {
 			i = x;  
 			break;
 		}
 	}
 
 	cin >> input;
-	
 	while( input != 'q' ) {
 		if (input == 'c') { 
 			checkTerminate(p);
@@ -312,7 +307,7 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 						}
 						else{
 							//i = ros;
-							for(int x = ros; x < 2400;  x ++) {
+							for(x = ros; x < 2400;  x ++) {
 								if(mainMem[x] == '.') {
 									i = x; 
 									break;
@@ -424,8 +419,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 	while( input != 'q' ) {
 		if (input == 'c') { 
 			//loop to check for terminated process
-			for (int j = 0; j < p.size(); j++)
-			{
+			for (int j = 0; j < p.size(); j++) {
 				if (checkProbability(p[j].getTermProb()) == true) {
 					for(r = 0; r < 58; r++) {
 						temp = r + 65;  
@@ -435,8 +429,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 						}
 					}
 					for (m = ros; m < 2400; m++) {
-						if (mainMem[m] == p[j].getProcName())
-						{
+						if (mainMem[m] == p[j].getProcName()) {
 							mainMem[m] = '.';
 						}
 					}
@@ -453,21 +446,17 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 				
 				count = p.back().getCellRequired();
 				//Do all the crap here!!!
-				for (n = ros; n < 2400; n++)
-				{
-					if (mainMem[n] == '.' && count > 0)
-					{
+				for (n = ros; n < 2400; n++) {
+					if (mainMem[n] == '.' && count > 0) {
 						mainMem[n] = p.back().getProcName();
 						count--;
 					}
-					if (n == 2399)
-					{
+					if (n == 2399) {
 						printMem();
 						cout << "9: ERROR: Out of memory" << endl;
 						return;
 					}
-					if (count == 0)
-					{
+					if (count == 0) {
 						break;
 					}
 				}
@@ -605,7 +594,7 @@ int createProcess(vector<Process> &proc, int pt)
  * will be added based on the probability */ 
 bool checkProbability(int prob){ 
 	int random = rand() % 99 + 1; 
-	// If the number is within the probability return true
+	/* If the number is within the probability return true */ 
 	if(random <= prob) { 
 		return true; 
 	}
