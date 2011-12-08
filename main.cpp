@@ -72,26 +72,29 @@ int main(int argc, char * argv[])
 			startPos ++;
 		}
 	}
-	// print out initial main memory 
-	printMem();
 
 	if (strcmp(argv[1],"first") == 0) {
+		printMem();
 		firstFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"best") == 0) {
+		printMem();
 		bestFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"next") == 0) {
+		printMem();
 		nextFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"worst") == 0) {
+		printMem();
 		worstFit(processes, ptp, npp);
 	}
 	else if (strcmp(argv[1],"noncontiguous") == 0) {
+		printMem();
 		noncontiguous(processes, ptp, npp);
 	}
 	else {
-		cout << "USAGE: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
+		cout << "USER INPUT FORMAT ERROR: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
 	}
 	system("pause");
 	return 0;
