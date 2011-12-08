@@ -108,6 +108,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 	int defrag, check, i, size; 
 	bool breakLoop = false; 
 
+	cout << "Enter 'c' to continue or 'q' to quit" << endl;
 	cin >> input;
 	
 	while( input != 'q' ) {
@@ -190,6 +191,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 		check, x, defrag, totalSizeRequired;
 	bool periodFound = false; 
 
+	cout << "Enter 'c' to continue or 'q' to quit" << endl;
 	cin >> input;
 	while( input != 'q' ) {
 		if (input == 'c') {
@@ -271,6 +273,7 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 		}
 	}
 
+	cout << "Enter 'c' to continue or 'q' to quit" << endl;
 	cin >> input;
 	while( input != 'q' ) {
 		if (input == 'c') { 
@@ -344,6 +347,7 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 		check, x, defrag, totalSizeRequired;
 	bool periodFound = false; 
 
+	cout << "Enter 'c' to continue or 'q' to quit" << endl;
 	cin >> input;
 	while( input != 'q' ) {
 		if (input == 'c') {
@@ -420,6 +424,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 	int check, r, m, n, temp, count; 
 	unsigned int j;
 
+	cout << "Enter 'c' to continue or 'q' to quit" << endl;
 	cin >> input;
 	
 	while( input != 'q' ) {
