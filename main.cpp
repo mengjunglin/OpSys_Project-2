@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <vector>
+#include <cstdlib>
 #include "mem.h"
 using namespace std;
 
@@ -52,7 +53,7 @@ int main(int argc, char * argv[])
 			mainMem[i] = '.';
 		}
 	}
-	srand(time(NULL)); 
+	srand((unsigned int)time(NULL)); 
 	startPos = ros;
 	// create and assign 20 processes into memory
 	for (int i = 0; i < 20; i++){
@@ -110,7 +111,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 		if (input == 'c') { 
 			checkTerminate(p);
 			/* checkProbability will return true if a new process 
-			/* should be created based on the probability */
+			 * should be created based on the probability */
 			if(checkProbability(npprob) == true) { 
 				check = createProcess(p, ptprob);
 				if(check == -1) { 
@@ -182,8 +183,8 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
 	int bestFit = 2401, bestFitStartLoc = 2401, i, count = 0, 
-		check, x, pLoc, defrag, totalSizeRequired;
-	bool breakLoop = false, periodFound = false; 
+		check, x, defrag, totalSizeRequired;
+	bool periodFound = false; 
 
 	cin >> input;
 	while( input != 'q' ) {
@@ -257,7 +258,6 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
 	int defrag, check, i, tempStartLoc = 0, x; 
-	bool breakLoop = false; 
 
 	for(int x = ros; x < 2400;  x ++) {
 		if(mainMem[x] == '.') {
@@ -271,7 +271,7 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 		if (input == 'c') { 
 			checkTerminate(p);
 			/* checkProbability will return true if a new process 
-			/* should be created based on the probability */
+			 * should be created based on the probability */
 			if(checkProbability(npprob) == true) { 
 				check = createProcess(p, ptprob);
 				if(check == -1) { 
@@ -279,7 +279,6 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 					return; 
 				}
 				while(i < 2400) {
-					bool periodFound = false;
 					int leftOver = 2400 - i; 
 					/* since we are doing next we do not have to worry about 
 					 * missing an empty space. Once the process hits the end of 
@@ -336,8 +335,8 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
 	int worstFit, worstFitStartLoc, i, count = 0, 
-		check, x, pLoc, defrag, totalSizeRequired;
-	bool breakLoop = false, periodFound = false; 
+		check, x, defrag, totalSizeRequired;
+	bool periodFound = false; 
 
 	cin >> input;
 	while( input != 'q' ) {
@@ -411,15 +410,15 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 {
 	char input;
-	int defrag, check, i, size, r, m, n, temp, count; 
-	bool breakLoop = false; 
+	int check, r, m, n, temp, count; 
+	unsigned int j;
 
 	cin >> input;
 	
 	while( input != 'q' ) {
 		if (input == 'c') { 
 			//loop to check for terminated process
-			for (int j = 0; j < p.size(); j++) {
+			for (j = 0; j < p.size(); j++) {
 				if (checkProbability(p[j].getTermProb()) == true) {
 					for(r = 0; r < 58; r++) {
 						temp = r + 65;  
@@ -436,7 +435,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			/* checkProbability will return true if a new process 
-			/* should be created based on the probability */
+			 * should be created based on the probability */
 			if(checkProbability(npprob) == true) { 
 				check = createProcess(p, ptprob);
 				if(check == -1) { 
@@ -445,7 +444,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 				}
 				
 				count = p.back().getCellRequired();
-				//Do all the crap here!!!
+
 				for (n = ros; n < 2400; n++) {
 					if (mainMem[n] == '.' && count > 0) {
 						mainMem[n] = p.back().getProcName();
@@ -478,7 +477,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
  * of the memory */
 int defragmentation(vector<Process> &p)
 {
-	int i = ros, empty = 0, tempStart, oldEnd = 0, newEnd = 0, freeCells = 0, numProc = 0, 
+	int i = ros, oldEnd = 0, newEnd = 0, freeCells = 0, numProc = 0, 
 			x, pLoc, tempOldEnd, j, oldStart, oldLen, tempNewEnd;
 	bool defrag = false, breakLoop = false; 
 	double per;
@@ -561,8 +560,8 @@ int defragmentation(vector<Process> &p)
  * vector location it is necessary to find the processes 
  * that matches the character in main memory */ 
 int findMatch(vector<Process> &proc, char procName) {
-	int i = 0; 
-	for(i; i < proc.size(); i ++) {
+	unsigned int i; 
+	for(i = 0; i < proc.size(); i ++) {
 		if(proc[i].getProcName() == procName){
 			return i;
 		}
@@ -577,7 +576,7 @@ int findMatch(vector<Process> &proc, char procName) {
  * in main memory */ 
 int createProcess(vector<Process> &proc, int pt)
 {
-	int k = nextProcessChar(), len, startLocation;
+	int k = nextProcessChar(), len;
 	
 	if (k == -1) {
 		cout << "4: ERROR: Out of Memory in Create Process " << endl; 
@@ -644,7 +643,8 @@ void checkTerminate(vector<Process> &p)
 	vector<Process> pCopy;
 	pCopy.clear();
 	char temp; 
-	int j, r, m;
+	int r, m;
+	unsigned int j;
 
 	for (j = 0; j < p.size(); j++)  {
 		if (checkProbability(p[j].getTermProb()) == true) {
