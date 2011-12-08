@@ -168,6 +168,7 @@ void firstFit(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			printMem();
+			cout << "Enter 'c' to continue or 'q' to quit" << endl; 
 			cin >> input;
 		}
 		else {
@@ -243,6 +244,7 @@ void bestFit(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			printMem();
+			cout << "Enter 'c' to continue or 'q' to quit" << endl; 
 			cin >> input;
 		}
 		else {
@@ -321,6 +323,7 @@ void nextFit(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			printMem();
+			cout << "Enter 'c' to continue or 'q' to quit" << endl; 
 			cin >> input;
 		}
 		else {
@@ -395,6 +398,7 @@ void worstFit(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			printMem();
+			cout << "Enter 'c' to continue or 'q' to quit" << endl; 
 			cin >> input;
 		}
 		else {
@@ -464,6 +468,7 @@ void noncontiguous(vector<Process> &p, int ptprob, int npprob)
 				}
 			}
 			printMem();
+			cout << "Enter 'c' to continue or 'q' to quit" << endl; 
 			cin >> input;
 		}
 		else {
