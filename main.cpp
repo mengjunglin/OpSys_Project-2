@@ -493,6 +493,8 @@ int defragmentation(vector<Process> &p)
 	bool defrag = false, breakLoop = false; 
 	double per;
 	
+	cout << "Performing defragmentation." << endl;
+	
 	while (i < 2400) {
 		if(mainMem[i] == '.') {
 			breakLoop = false; 
@@ -555,6 +557,9 @@ int defragmentation(vector<Process> &p)
 	if(defrag == true) {
 		freeCells = oldEnd - newEnd;
 		per = ((double)freeCells / (double)2400) * (double)100;
+		printMem();
+		cout << fixed;
+		cout << setprecision (2) <<endl;
 		cout << "Defragmentation complete." << endl;
 		cout << "Relocated " << numProc << " processes to create free memory block of " 
 			<< freeCells << " units (" << per << "% of total memory)." << endl;
