@@ -4,6 +4,7 @@
 // Finalize Date: 12/09/2011
 
 #include <iostream>
+#include <iomanip>
 #include <string.h>
 #include <time.h>
 #include <vector>
