@@ -494,8 +494,6 @@ int defragmentation(vector<Process> &p)
 	bool defrag = false, breakLoop = false; 
 	double per;
 	
-	cout << "Performing defragmentation." << endl;
-	
 	while (i < 2400) {
 		if(mainMem[i] == '.') {
 			breakLoop = false; 
@@ -558,6 +556,7 @@ int defragmentation(vector<Process> &p)
 	if(defrag == true) {
 		freeCells = oldEnd - newEnd;
 		per = ((double)freeCells / (double)2400) * (double)100;
+		cout << "Performing defragmentation." << endl;
 		printMem();
 		cout << fixed;
 		cout << setprecision (2) <<endl;
