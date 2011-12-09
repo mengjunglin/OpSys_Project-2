@@ -688,6 +688,10 @@ void printMem()
 {
 	int i; 
 	for (i = 0; i < 2400; i++) {
+		if(i % 80 == 0)
+		{
+			cout << endl;
+		}
 		cout << mainMem[i];
 	}
 	cout << endl << endl;
