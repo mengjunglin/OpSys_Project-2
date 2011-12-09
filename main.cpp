@@ -38,7 +38,6 @@ int main(int argc, char * argv[])
 
 	if (argc != 4) {
 		cout << "USAGE: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
-		system("pause");
 		return 0;
 	}
 
@@ -96,7 +95,6 @@ int main(int argc, char * argv[])
 	else {
 		cout << "USER INPUT FORMAT ERROR: memsim { noncontiguous | first | best | next | worst } <process-termination-probability> <new-process-probability>" << endl;
 	}
-	system("pause");
 	return 0;
 }
 
